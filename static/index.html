@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart-Scan Expense Auditor</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Smart-Scan Expense Auditor</h1>
+      <p class="subtitle">Upload a receipt photo or PDF. AI extracts merchant, total, and tax category.</p>
+    </header>
+
+    <section class="upload-section">
+      <div id="dropzone" class="dropzone">
+        <input type="file" id="fileInput" accept="image/*,.pdf" hidden>
+        <div class="dropzone-content">
+          <span class="dropzone-icon">📄</span>
+          <p>Drag and drop a receipt here, or <span class="browse">browse</span></p>
+          <p class="hint">Supports JPEG, PNG, WebP, PDF (max 10MB)</p>
+        </div>
+      </div>
+    </section>
+
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>Analyzing receipt...</p>
+    </div>
+
+    <div id="error" class="error hidden"></div>
+
+    <section id="resultSection" class="result-section hidden">
+      <h2>Extracted Data</h2>
+      <div id="resultCard" class="result-card"></div>
+    </section>
+
+    <section class="history-section">
+      <div class="history-header">
+        <h2>Expense History</h2>
+        <button id="clearHistory" class="btn-secondary" type="button">Clear History</button>
+      </div>
+      <ul id="historyList" class="history-list"></ul>
+    </section>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
