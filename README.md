@@ -20,11 +20,19 @@ Upload receipt photos or PDFs. AI extracts merchant, total, and tax category wit
    brew install poppler   # macOS
    ```
 
-4. **Add your Gemini API key** (free at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)):
+4. **Add your OpenRouter API key** (get one at [openrouter.ai/keys](https://openrouter.ai/keys)):
    ```bash
    cp .env.example .env
-   # Edit .env: GEMINI_API_KEY=your-key-here
+   # Edit .env: OPENROUTER_API_KEY=your-key-here
    ```
+
+5. **OCR Mode** (recommended - uses local OCR first to reduce API tokens):
+   - `USE_OCR_MODE=1` (default) - Runs local OCR first, sends extracted text to AI
+   - `USE_OCR_MODE=0` - Sends image directly to AI (uses more tokens)
+
+6. **Choose a model** (in `.env`):
+   - `OPENROUTER_MODEL=google/gemini-2.0-flash-001` (default, fast & cheap)
+   - Other options: `anthropic/claude-3-haiku`, `openai/gpt-4o-mini`
 
 ## Run
 

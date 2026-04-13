@@ -48,8 +48,83 @@ function renderResult(data) {
       <span class="result-label">Justification</span>
       <span class="result-value justification">${escapeHtml(data.justification)}</span>
     </div>
+    <button class="btn-secondary edit-save-btn" type="button" onclick="addToHistory(${JSON.stringify(data).replace(/"/g, '&quot;')})">Save Entry</button>
   `;
   resultSection.classList.remove("hidden");
+}
+
+function openEditModal(item) {
+  const modal = document.createElement("div");
+  modal.className = "modal-overlay";
+  modal.id = "editModal";
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h3>Edit Entry</h3>
+      <form id="editForm">
+        <div class="form-group">
+          <label for="editMerchant">Merchant</label>
+          <input type="text" id="editMerchant" value="${escapeHtml(item.merchant)}" required>
+        </div>
+        <div class="form-group">
+          <label for="editTotal">Total ($)</label>
+          <input type="number" id="editTotal" step="0.01" value="${escapeHtml(String(item.total))}" required>
+        </div>
+        <div class="form-group">
+          <label for="editCategory">Category</label>
+          <select id="editCategory" required>
+            <option value="Office Supplies" ${item.category === 'Office Supplies' ? 'selected' : ''}>Office Supplies</option>
+            <option value="Meals & Entertainment" ${item.category === 'Meals & Entertainment' ? 'selected' : ''}>Meals & Entertainment</option>
+            <option value="Travel" ${item.category === 'Travel' ? 'selected' : ''}>Travel</option>
+            <option value="Equipment" ${item.category === 'Equipment' ? 'selected' : ''}>Equipment</option>
+            <option value="Software" ${item.category === 'Software' ? 'selected' : ''}>Software</option>
+            <option value="Professional Services" ${item.category === 'Professional Services' ? 'selected' : ''}>Professional Services</option>
+            <option value="Marketing" ${item.category === 'Marketing' ? 'selected' : ''}>Marketing</option>
+            <option value="Utilities" ${item.category === 'Utilities' ? 'selected' : ''}>Utilities</option>
+            <option value="Insurance" ${item.category === 'Insurance' ? 'selected' : ''}>Insurance</option>
+            <option value="Other" ${item.category === 'Other' ? 'selected' : ''}>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editJustification">Justification</label>
+          <textarea id="editJustification" rows="2">${escapeHtml(item.justification)}</textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeEditModal();
+  });
+  document.getElementById("editForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    saveEdit(item.id);
+  });
+}
+
+function closeEditModal() {
+  const modal = document.getElementById("editModal");
+  if (modal) modal.remove();
+}
+
+function saveEdit(id) {
+  const history = getHistory();
+  const index = history.findIndex(item => item.id === id);
+  if (index !== -1) {
+    history[index] = {
+      ...history[index],
+      merchant: document.getElementById("editMerchant").value,
+      total: document.getElementById("editTotal").value,
+      category: document.getElementById("editCategory").value,
+      justification: document.getElementById("editJustification").value,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    renderHistory();
+  }
+  closeEditModal();
 }
 
 function escapeHtml(str) {
@@ -100,6 +175,7 @@ function renderHistory() {
           <span class="category">${escapeHtml(item.category)}</span>
           · ${formatDate(item.date)}
         </div>
+        <button class="btn-edit" type="button" onclick='openEditModal(${JSON.stringify(item).replace(/'/g, "&#39;")})'>Edit</button>
       </li>
     `
     )
